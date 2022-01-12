@@ -1195,11 +1195,11 @@ static int try_refresh(conf_t *conf, zone_t *zone, const conf_remote_t *master,
 		.max_zone_size = max_zone_size(conf, zone->name),
 		.use_edns = !master->no_edns,
 		.edns = query_edns_data_init(conf, master->addr.ss_family),
+		.edns.expire_option = true,
 		.expire_timer = EXPIRE_TIMER_INVALID,
 		.fallback = fallback,
 		.fallback_axfr = false, // will be set upon IXFR consume
 	};
-	data.edns.expire_option = true;
 
 	knot_requestor_t requestor;
 	knot_requestor_init(&requestor, &REFRESH_API, &data, NULL);
