@@ -1,4 +1,4 @@
-/*  Copyright (C) 2021 CZ.NIC, z.s.p.o. <knot-dns@labs.nic.cz>
+/*  Copyright (C) 2022 CZ.NIC, z.s.p.o. <knot-dns@labs.nic.cz>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@ static int ds_query_begin(knot_layer_t *layer, void *params)
 static int ds_query_produce(knot_layer_t *layer, knot_pkt_t *pkt)
 {
 	struct ds_query_data *data = layer->data;
-	struct query_edns_data edns = { .max_payload = data->edns_max_payload, .do_flag = true, };
+	query_edns_data_t edns = { .max_payload = data->edns_max_payload, .do_flag = true };
 
 	query_init_pkt(pkt);
 
