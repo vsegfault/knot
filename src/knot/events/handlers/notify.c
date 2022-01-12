@@ -1,4 +1,4 @@
-/*  Copyright (C) 2021 CZ.NIC, z.s.p.o. <knot-dns@labs.nic.cz>
+/*  Copyright (C) 2022 CZ.NIC, z.s.p.o. <knot-dns@labs.nic.cz>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ static int send_notify(conf_t *conf, zone_t *zone, const knot_rrset_t *soa,
 		.remote = (struct sockaddr *)&slave->addr,
 	};
 
-	query_edns_data_init(&data.edns, conf, zone->name, slave->addr.ss_family);
+	query_edns_data_init(&data.edns, conf, slave->addr.ss_family);
 
 	knot_requestor_t requestor;
 	knot_requestor_init(&requestor, &NOTIFY_API, &data, NULL);

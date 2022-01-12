@@ -1,4 +1,4 @@
-/*  Copyright (C) 2021 CZ.NIC, z.s.p.o. <knot-dns@labs.nic.cz>
+/*  Copyright (C) 2022 CZ.NIC, z.s.p.o. <knot-dns@labs.nic.cz>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -1199,7 +1199,7 @@ static int try_refresh(conf_t *conf, zone_t *zone, const conf_remote_t *master,
 		.fallback_axfr = false, // will be set upon IXFR consume
 	};
 
-	query_edns_data_init(&data.edns, conf, zone->name, master->addr.ss_family);
+	query_edns_data_init(&data.edns, conf, master->addr.ss_family);
 	data.edns.expire_option = true;
 
 	knot_requestor_t requestor;

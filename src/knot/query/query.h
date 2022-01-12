@@ -1,4 +1,4 @@
-/*  Copyright (C) 2019 CZ.NIC, z.s.p.o. <knot-dns@labs.nic.cz>
+/*  Copyright (C) 2022 CZ.NIC, z.s.p.o. <knot-dns@labs.nic.cz>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -42,13 +42,12 @@ void query_init_pkt(knot_pkt_t *pkt);
  *
  * \param[out] edns           EDNS parameters to initialize.
  * \param[in]  conf           Server configuration.
- * \param[in]  zone           Zone name.
  * \param[in]  remote_family  Address family for remote host.
  *
  * \return KNOT_E*
  */
 int query_edns_data_init(struct query_edns_data *edns, conf_t *conf,
-                         const knot_dname_t *zone, int remote_family);
+                         int remote_family);
 
 /*!
  * \brief Append EDNS into the packet.
