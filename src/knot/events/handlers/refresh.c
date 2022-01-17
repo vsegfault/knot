@@ -160,6 +160,14 @@ static time_t bootstrap_next(const zone_timers_t *timers)
 	return interval;
 }
 
+/*!
+ * \brief Modify the expire timer wrt the received EDNS EXPIRE (RFC 7314, section 4)
+ *
+ * \param data    The refresh data.
+ * \param pkt     A received packet to parse.
+ * \param strict  Strictly use EDNS EXPIRE as the expire timer value.
+ *                (true == RFC 7314, section 4, third paragraph; false == second paragraph)
+ */
 static void consume_edns_expire(struct refresh_data *data, knot_pkt_t *pkt, bool strict)
 {
 	uint8_t *expire_opt = knot_pkt_edns_option(pkt, KNOT_EDNS_OPTION_EXPIRE);
@@ -169,6 +177,9 @@ static void consume_edns_expire(struct refresh_data *data, knot_pkt_t *pkt, bool
 	}
 }
 
+/*!
+ * \brief RFC 7314, section 4, fourth paragraph
+ */
 static void finalize_edns_expire(struct refresh_data *data)
 {
 	data->expire_timer = MIN(data->expire_timer, zone_soa_expire(data->zone));
