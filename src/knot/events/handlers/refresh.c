@@ -161,12 +161,8 @@ static time_t bootstrap_next(const zone_timers_t *timers)
 }
 
 /*!
- * \brief Modify the expire timer wrt the received EDNS EXPIRE (RFC 7314, section 4)
- *
- * \param data    The refresh data.
- * \param pkt     A received packet to parse.
- * \param strict  Strictly use EDNS EXPIRE as the expire timer value.
- *                (true == RFC 7314, section 4, third paragraph; false == second paragraph)
+ * \brief Modify the expire timer wrt the received EDNS EXPIRE
+ *        (RFC 7314, section 4, second and third paragraph)
  */
 static void consume_edns_expire(struct refresh_data *data, knot_pkt_t *pkt)
 {
