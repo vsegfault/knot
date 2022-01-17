@@ -168,12 +168,14 @@ static time_t bootstrap_next(const zone_timers_t *timers)
  * \param strict  Strictly use EDNS EXPIRE as the expire timer value.
  *                (true == RFC 7314, section 4, third paragraph; false == second paragraph)
  */
-static void consume_edns_expire(struct refresh_data *data, knot_pkt_t *pkt, bool strict)
+static void consume_edns_expire(struct refresh_data *data, knot_pkt_t *pkt)
 {
 	uint8_t *expire_opt = knot_pkt_edns_option(pkt, KNOT_EDNS_OPTION_EXPIRE);
 	if (expire_opt != NULL && knot_edns_opt_get_length(expire_opt) == sizeof(uint32_t)) {
 		uint32_t edns_expire = be32toh(*(uint32_t *)knot_edns_opt_get_data(expire_opt));
-		data->expire_timer = strict ? edns_expire : MAX(edns_expire, data->expire_timer);
+		data->expire_timer = (data->state == STATE_SOA_QUERY ||
+		                      data->xfr_type == XFR_TYPE_UPTODATE) ?
+	                             MAX(edns_expire, data->expire_timer) : edns_expire;
 	}
 }
 
@@ -877,7 +879,7 @@ static int ixfr_consume(knot_pkt_t *pkt, struct refresh_data *data)
 			           "receiving AXFR-style IXFR");
 			return axfr_consume(pkt, data);
 		case XFR_TYPE_UPTODATE:
-			consume_edns_expire(data, pkt, false);
+			consume_edns_expire(data, pkt);
 			finalize_edns_expire(data);
 			IXFRIN_LOG(LOG_INFO, data->zone->name, data->remote,
 			          "zone is up-to-date, expires in %u secs", data->expire_timer);
@@ -990,7 +992,7 @@ static int soa_query_consume(knot_layer_t *layer, knot_pkt_t *pkt)
 		data->state = STATE_TRANSFER;
 		return KNOT_STATE_RESET; // continue with transfer
 	} else if (master_uptodate) {
-		consume_edns_expire(data, pkt, false);
+		consume_edns_expire(data, pkt);
 		finalize_edns_expire(data);
 		REFRESH_LOG(LOG_INFO, data->zone->name, data->remote,
 		            "remote serial %u, zone is up-to-date, expires in %u secs",
@@ -1050,7 +1052,7 @@ static int transfer_consume(knot_layer_t *layer, knot_pkt_t *pkt)
 {
 	struct refresh_data *data = layer->data;
 
-	consume_edns_expire(data, pkt, true);
+	consume_edns_expire(data, pkt);
 	if (data->expire_timer < 2) {
 		REFRESH_LOG(LOG_ERR, data->zone->name, data->remote,
 			    "master expires too soon, in %u secs", data->expire_timer);
